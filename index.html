@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>OG Project Management | Live Project, Analytics & Budget Suite</title>
+  <meta name="description" content="OG-Project-Management - Real-time Project Management, Live Currency Conversion, Analytics & Telegram Sync" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Dark Theme (Default) */
+      --bg-base: #090d0b;
+      --bg-surface: #111714;
+      --bg-surface-raised: #18221d;
+      --bg-surface-glass: rgba(17, 23, 20, 0.88);
+      --border-subtle: #213028;
+      --border-glow: rgba(16, 185, 129, 0.3);
+      --text-main: #f0fdf4;
+      --text-muted: #889e90;
+      --text-dim: #546a5d;
+      
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --accent-light: rgba(16, 185, 129, 0.12);
+      
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.12);
+      
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.12);
+
+      --info: #06b6d4;
+      --info-light: rgba(6, 182, 212, 0.12);
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 18px -2px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 12px 36px -4px rgba(0, 0, 0, 0.6);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f3f5f3;
+      --bg-surface: #ffffff;
+      --bg-surface-raised: #e7ede8;
+      --bg-surface-glass: rgba(255, 255, 255, 0.92);
+      --border-subtle: #d0ded3;
+      --border-glow: rgba(16, 185, 129, 0.25);
+      --text-main: #0d1a12;
+      --text-muted: #496352;
+      --text-dim: #799482;
+      
+      --accent: #059669;
+      --accent-hover: #047857;
+      --accent-light: rgba(5, 150, 105, 0.1);
+      
+      --warning: #d97706;
+      --warning-light: rgba(217, 119, 6, 0.1);
+      
+      --danger: #dc2626;
+      --danger-light: rgba(220, 38, 38, 0.1);
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 18px -2px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 36px -4px rgba(0, 0, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.04) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+    /* Layout Containers */
+    .app-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+
+    /* Top Sticky Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: var(--bg-surface-glass);
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+    }
+
+    .nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-badge-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+    }
+
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Navigation Tabs: Workspace, Analytics, Settings */
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-surface-raised);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Currency Widget */
+    .currency-widget {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 4px 8px;
+    }
+
+    .select-currency {
+      background: transparent;
+      color: var(--text-main);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .fx-rate-tag {
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-raised);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface);
+      border-color: var(--text-dim);
+    }
+
+    .btn-icon {
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-raised);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-icon:hover {
+      color: var(--text-main);
+      background: var(--bg-surface);
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 11.5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    /* Section Tabs Switching */
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    /* Hero Analytics Banner */
+    .hero-banner {
+      background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-surface-raised) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 2fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .hero-lead-label {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-main-stat {
+      font-family: var(--font-mono);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .hero-substat {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .hero-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface-glass);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+    }
+
+    .kpi-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .kpi-status {
+      font-size: 10.5px;
+      margin-top: 2px;
+      color: var(--accent);
+    }
+
+    /* Progress bar */
+    .budget-progress-container {
+      margin-top: 16px;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--bg-base);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.warn {
+      background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .progress-fill.danger {
+      background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+    }
+
+    /* Toolbar */
+    .workspace-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-btn:hover {
+      color: var(--text-main);
+      border-color: var(--text-dim);
+    }
+
+    .chip-btn.active {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border-color: var(--text-main);
+    }
+
+    .chip-count {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      min-width: 220px;
+      flex: 1 1 220px;
+      max-width: 360px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 12.5px;
+      padding: 8px 12px 8px 34px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+      font-size: 13px;
+    }
+
+    /* Projects List View */
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .project-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-glow);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+    }
+
+    .project-card.is-warn::before { background: var(--warning); }
+    .project-card.is-danger::before { background: var(--danger); }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .card-title-group {
+      flex: 1 1 240px;
+    }
+
+    .card-client-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      user-select: none;
+    }
+
+    .status-badge.running {
+      background: var(--accent-light);
+      color: var(--accent);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.done {
+      background: var(--bg-surface-raised);
+      color: var(--text-muted);
+      border-color: var(--border-subtle);
+    }
+
+    .card-notes {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    .card-figures-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      background: var(--bg-surface-raised);
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      margin-bottom: 14px;
+    }
+
+    .card-fig-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .card-fig-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .card-fig-val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card-fig-val.spent-warn { color: var(--warning); }
+    .card-fig-val.spent-danger { color: var(--danger); }
+
+    .card-footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .card-dates-info {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Expandable Drawer inside each Project */
+    .card-drawer {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border-subtle);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .card-drawer.open { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .drawer-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 6px;
+      overflow-x: auto;
+    }
+
+    .drawer-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .drawer-tab-btn.active {
+      color: var(--text-main);
+      border-bottom-color: var(--accent);
+    }
+
+    .drawer-pane { display: none; }
+    .drawer-pane.active { display: block; }
+
+    /* Expenses List */
+    .expense-list {
+      list-style: none;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+    }
+
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      gap: 8px;
+    }
+
+    .expense-item-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .expense-item-label { font-weight: 600; }
+    .expense-item-date { font-size: 10.5px; color: var(--text-muted); font-family: var(--font-mono); }
+    .expense-item-amt { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
+
+    .expense-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 110px 120px auto;
+      gap: 6px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    /* Remarks / Updates */
+    .remark-list {
+      max-height: 240px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .remark-bubble {
+      background: var(--bg-surface-raised);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .remark-header {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 10.5px;
+      margin-bottom: 4px;
+    }
+
+    .remark-author { font-weight: 700; color: var(--accent); }
+    .remark-img-thumb {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: var(--radius-sm);
+      margin-top: 6px;
+      cursor: pointer;
+      display: block;
+    }
+
+    /* Analytics Panel Styles */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Inputs */
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 12.5px;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-field {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close-modal-btn:hover { color: var(--text-main); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    /* Footer */
+    .app-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Responsive Breakpoints for Mobile */
+    @media (max-width: 768px) {
+      .app-container { padding: 0 12px 40px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-kpis { grid-template-columns: 1fr 1fr; }
+      .card-figures-grid { grid-template-columns: 1fr 1fr; }
+      .expense-form-grid { grid-template-columns: 1fr 1fr; }
+      .nav-inner { flex-direction: column; align-items: stretch; gap: 10px; }
+      .nav-controls { justify-content: space-between; }
+      .nav-tabs { overflow-x: auto; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-kpis { grid-template-columns: 1fr; }
+      .card-figures-grid { grid-template-columns: 1fr; }
+      .expense-form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header class="app-header">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-badge-icon">OG</div>
+        <div class="brand-text">
+          <h1>OG Project Management</h1>
+          <p class="brand-sub">Real-Time Project & Budget Suite</p>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs: Workspace, Analytics, Settings -->
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn active" data-tab="workspace" onclick="ui.switchMainTab('workspace')">
+          ⚡ Workspace
+        </button>
+        <button class="nav-tab-btn" data-tab="analytics" onclick="ui.switchMainTab('analytics')">
+          📊 Analytics
+        </button>
+        <button class="nav-tab-btn" data-tab="settings" onclick="ui.switchMainTab('settings')">
+          ⚙️ Settings
+        </button>
+      </nav>
+
+      <div class="nav-controls">
+        <!-- Live Real-Time Currency Selector -->
+        <div class="currency-widget">
+          <label for="currencySelect" style="font-size: 11px; color: var(--text-muted);">Currency:</label>
+          <select class="select-currency" id="currencySelect" onchange="store.setCurrency(this.value)">
+            <option value="INR">₹ INR</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+            <option value="AED">د.إ AED</option>
+          </select>
+          <span class="fx-rate-tag" id="fxRateBadge" title="Live conversion rate">1 USD = ₹83.8</span>
+        </div>
+
+        <button class="btn btn-secondary btn-icon" title="Toggle Light/Dark Theme" onclick="ui.toggleTheme()">
+          🌓
+        </button>
+
+        <button class="btn btn-primary" onclick="ui.openNewProjectModal()">
+          <span>+</span> New Project
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <!-- TAB 1: WORKSPACE -->
+    <section id="tab-workspace" class="tab-section active">
+
+      <!-- Executive Portfolio Health Banner -->
+      <div class="hero-banner">
+        <div class="hero-grid">
+          <div>
+            <div class="hero-lead-label">
+              <span>●</span> Portfolio Budget Utilization
+            </div>
+            <div class="hero-main-stat" id="heroSpentFigure">₹0</div>
+            <div class="hero-substat" id="heroSubFigure">Loading metrics...</div>
+          </div>
+
+          <div class="hero-kpis">
+            <div class="kpi-card">
+              <div class="kpi-label">Active Projects</div>
+              <div class="kpi-value" id="kpiActiveCount">0</div>
+              <div class="kpi-status" id="kpiActiveSub">In progress</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Remaining Balance</div>
+              <div class="kpi-value" id="kpiRemainingVal">₹0</div>
+              <div class="kpi-status" id="kpiRemainingSub">Available</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Total Allocated</div>
+              <div class="kpi-value" id="kpiTotalBudgetVal">₹0</div>
+              <div class="kpi-status" id="kpiTeamSub">0 Team Members</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="budget-progress-container">
+          <div class="progress-track">
+            <div class="progress-fill" id="heroProgressFill" style="width: 0%;"></div>
+          </div>
+          <div class="progress-labels">
+            <span id="heroProgressPct">0% Consumed</span>
+            <span id="heroProgressStatus">All systems green</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspace Projects Toolbar -->
+      <div class="workspace-toolbar">
+        <div class="filter-chips" id="filterChipsContainer">
+          <button class="chip-btn active" data-filter="all" onclick="store.setFilter('all')">
+            All <span class="chip-count" id="countAll">0</span>
+          </button>
+          <button class="chip-btn" data-filter="running" onclick="store.setFilter('running')">
+            🔄 Running <span class="chip-count" id="countRunning">0</span>
+          </button>
+          <button class="chip-btn" data-filter="done" onclick="store.setFilter('done')">
+            ✅ Delivered <span class="chip-count" id="countDone">0</span>
+          </button>
+          <button class="chip-btn" data-filter="critical" onclick="store.setFilter('critical')">
+            ⚠️ Critical Budget <span class="chip-count" id="countCritical">0</span>
+          </button>
+        </div>
+
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="projectSearchInput" placeholder="Search by name, client, notes..." oninput="store.setSearch(this.value)" />
+        </div>
+      </div>
+
+      <!-- All Projects Lined Up (Direct Edit & Management) -->
+      <div id="projectsList" class="projects-list"></div>
+
+    </section>
+
+    <!-- TAB 2: ANALYTICS & REPORTS -->
+    <section id="tab-analytics" class="tab-section">
+      <div class="hero-banner" style="margin-bottom: 20px;">
+        <div class="hero-lead-label">FINANCIAL INTELLIGENCE</div>
+        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 6px;">Portfolio Budget & Expense Analytics</h2>
+        <p style="color: var(--text-muted); font-size: 13.5px;">Live breakdown of expenditures, allocations, and portfolio headroom in your active currency.</p>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="panel-card">
+          <h3 class="panel-title">📊 Budget Distribution by Project</h3>
+          <div id="analyticsBarsList" style="display: flex; flex-direction: column; gap: 14px;"></div>
+        </div>
+
+        <div class="panel-card">
+          <h3 class="panel-title">💾 Data Management & Reporting</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">Export summary reports or download full database backups.</p>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn btn-secondary" onclick="store.exportCSV()">📥 Download CSV Summary</button>
+            <button class="btn btn-secondary" onclick="store.exportJSON()">📦 Export Full JSON Backup</button>
+            <label class="btn btn-secondary" style="cursor: pointer; text-align: center;">
+              📂 Restore JSON Backup
+              <input type="file" accept=".json" style="display: none;" onchange="store.importJSON(event)" />
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SETTINGS & TELEGRAM -->
+    <section id="tab-settings" class="tab-section">
+      <div class="analytics-grid">
+        <!-- Telegram Bot Settings -->
+        <div class="panel-card">
+          <div class="hero-lead-label">TELEGRAM INTEGRATION</div>
+          <h3 class="panel-title">🤖 Automated Telegram Alerts</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">Receive instant alerts on your Telegram when updates or photos are posted.</p>
+
+          <div class="form-field">
+            <label class="form-label">Bot Token</label>
+            <input type="text" class="form-input" id="tgBotTokenInput" placeholder="Get from @BotFather on Telegram" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Your Telegram Chat ID</label>
+            <input type="text" class="form-input" id="tgChatIdInput" placeholder="Get from @userinfobot on Telegram" />
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <button class="btn btn-primary btn-sm" onclick="store.saveTelegramSettings()">Save Configuration</button>
+            <button class="btn btn-secondary btn-sm" onclick="store.testTelegram()">Test Ping</button>
+          </div>
+        </div>
+
+        <!-- Team Management -->
+        <div class="panel-card">
+          <div class="hero-lead-label">ORGANIZATION</div>
+          <h3 class="panel-title">👥 Team Directory</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">Manage team members who can post logs and updates.</p>
+
+          <div id="settingsTeamList" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px;"></div>
+
+          <div style="display: flex; gap: 6px;">
+            <input type="text" class="form-input" id="newStaffNameInput" placeholder="Teammate full name" style="flex: 1;" />
+            <button class="btn btn-primary btn-sm" onclick="store.addStaff()">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div>
+        <strong>OG-Project-Management</strong> &bull; LocalStorage Sync &bull; Mobile & Desktop Ready
+      </div>
+      <div>
+        <button class="btn btn-secondary btn-sm" onclick="store.exportCSV()">📥 Export CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="store.exportJSON()">📦 Backup JSON</button>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- MODAL: Add / Edit Project -->
+  <div class="modal-overlay" id="projectModal" onclick="if(event.target === this) ui.closeModal('projectModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title" id="projectModalTitle">Create New Project</h3>
+        <button class="close-modal-btn" onclick="ui.closeModal('projectModal')">&times;</button>
+      </div>
+
+      <form onsubmit="event.preventDefault(); store.saveProjectModal();">
+        <input type="hidden" id="editProjectId" />
+
+        <div class="form-field">
+          <label class="form-label">Project Name *</label>
+          <input type="text" class="form-input" id="modalProjectName" placeholder="e.g. Website Redesign" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-field">
+            <label class="form-label">Client / Company</label>
+            <input type="text" class="form-input" id="modalProjectClient" placeholder="e.g. ABC Corp" />
+          </div>
+          <div class="form-field">
+            <label class="form-label" id="modalBudgetLabel">Budget (INR ₹) *</label>
+            <input type="number" step="any" class="form-input" id="modalProjectPrice" placeholder="e.g. 150000" min="0" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-field">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-input" id="modalProjectStart" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Due Date</label>
+            <input type="date" class="form-input" id="modalProjectDue" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="modalProjectStatus">
+            <option value="running">🔄 Running</option>
+            <option value="done">✅ Delivered</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Notes & Details</label>
+          <textarea class="form-textarea" id="modalProjectNotes" rows="3" placeholder="Project deliverables, specifications, links..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn btn-secondary" onclick="ui.closeModal('projectModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveProjectBtn">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Photo Viewer -->
+  <div class="modal-overlay" id="photoViewerModal" onclick="if(event.target === this) ui.closeModal('photoViewerModal')">
+    <div class="modal-box" style="max-width: 680px; text-align: center;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Attached Photo</h3>
+        <button class="close-modal-btn" onclick="ui.closeModal('photoViewerModal')">&times;</button>
+      </div>
+      <img id="photoModalDisplay" src="" alt="Project Photo" style="max-width: 100%; border-radius: var(--radius-md);" />
+    </div>
+  </div>
+
+  <!-- Core Logic: Real-Time Currency Rates, State & UI -->
+  <script>
+    const STORAGE_KEY = "pt-data";
+
+    // Standard Currency metadata & Base Rates against INR
+    const CURRENCIES = {
+      INR: { symbol: "₹", locale: "en-IN", name: "Indian Rupee", rateFromINR: 1 },
+      USD: { symbol: "$", locale: "en-US", name: "US Dollar", rateFromINR: 0.0119 }, // ~83.8 INR
+      EUR: { symbol: "€", locale: "de-DE", name: "Euro", rateFromINR: 0.0110 },      // ~91.0 INR
+      GBP: { symbol: "£", locale: "en-GB", name: "British Pound", rateFromINR: 0.0094 }, // ~106.5 INR
+      AED: { symbol: "د.إ", locale: "ar-AE", name: "UAE Dirham", rateFromINR: 0.0438 } // ~22.8 INR
+    };
+
+    class StateManager {
+      constructor() {
+        this.rates = { ...CURRENCIES };
+        this.data = this.load();
+        this.currentFilter = "all";
+        this.searchQuery = "";
+        this.fetchLiveRates();
+      }
+
+      load() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (!parsed.projects) parsed.projects = [];
+            if (!parsed.currency) parsed.currency = "INR";
+            return parsed;
+          } catch (e) {
+            console.error("Failed to load local data", e);
+          }
+        }
+        return {
+          currency: "INR",
+          botToken: "",
+          yourTgId: "",
+          staff: [{ id: "s1", name: "You" }],
+          projects: []
+        };
+      }
+
+      save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+        ui.renderAll();
+      }
+
+      // Fetch Real-Time Live Currency Exchange Rates
+      async fetchLiveRates() {
+        try {
+          const res = await fetch("https://open.er-api.com/v6/latest/INR");
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.rates) {
+              if (json.rates.USD) CURRENCIES.USD.rateFromINR = json.rates.USD;
+              if (json.rates.EUR) CURRENCIES.EUR.rateFromINR = json.rates.EUR;
+              if (json.rates.GBP) CURRENCIES.GBP.rateFromINR = json.rates.GBP;
+              if (json.rates.AED) CURRENCIES.AED.rateFromINR = json.rates.AED;
+              console.log("Live currency rates updated:", CURRENCIES);
+              ui.updateFxBadge();
+              ui.renderAll();
+            }
+          }
+        } catch (err) {
+          console.log("Using cached/fallback currency rates");
+          ui.updateFxBadge();
+        }
+      }
+
+      setCurrency(c) {
+        this.data.currency = c;
+        this.save();
+      }
+
+      setFilter(f) {
+        this.currentFilter = f;
+        document.querySelectorAll("#filterChipsContainer .chip-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.filter === f);
+        });
+        ui.renderProjectsList();
+      }
+
+      setSearch(q) {
+        this.searchQuery = q.trim().toLowerCase();
+        ui.renderProjectsList();
+      }
+
+      // Convert amount in base INR to current selected currency
+      convert(amountInINR) {
+        const cur = this.data.currency || "INR";
+        const rate = CURRENCIES[cur]?.rateFromINR || 1;
+        return (Number(amountInINR) || 0) * rate;
+      }
+
+      // Format money according to active currency
+      format(amountInINR) {
+        const curCode = this.data.currency || "INR";
+        const cur = CURRENCIES[curCode] || CURRENCIES.INR;
+        const converted = this.convert(amountInINR);
+        return cur.symbol + new Intl.NumberFormat(cur.locale, { maximumFractionDigits: 0 }).format(Math.round(converted));
+      }
+
+      getTotals() {
+        const projects = this.data.projects || [];
+        const totalBudget = projects.reduce((s, p) => s + (Number(p.price) || 0), 0);
+        const totalSpent = projects.reduce((s, p) => {
+          const exp = (p.expenses || []).reduce((es, e) => es + (Number(e.amount) || 0), 0);
+          return s + exp;
+        }, 0);
+        const remaining = totalBudget - totalSpent;
+        const pct = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
+        return { totalBudget, totalSpent, remaining, pct, count: projects.length };
+      }
+
+      saveProjectModal() {
+        const id = document.getElementById("editProjectId").value;
+        const name = document.getElementById("modalProjectName").value.trim();
+        const client = document.getElementById("modalProjectClient").value.trim();
+        const inputPrice = Number(document.getElementById("modalProjectPrice").value) || 0;
+        const start = document.getElementById("modalProjectStart").value;
+        const due = document.getElementById("modalProjectDue").value;
+        const status = document.getElementById("modalProjectStatus").value;
+        const notes = document.getElementById("modalProjectNotes").value.trim();
+
+        if (!name) return;
+
+        // Store budget in base INR
+        const cur = this.data.currency || "INR";
+        const rate = CURRENCIES[cur]?.rateFromINR || 1;
+        const priceInINR = cur === "INR" ? inputPrice : inputPrice / rate;
+
+        if (id) {
+          const p = this.data.projects.find(x => x.id === id);
+          if (p) {
+            p.name = name;
+            p.client = client;
+            p.price = priceInINR;
+            p.start = start;
+            p.due = due;
+            p.status = status;
+            p.notes = notes;
+          }
+        } else {
+          this.data.projects.unshift({
+            id: "p_" + Math.random().toString(36).substr(2, 8),
+            name, client,
+            price: priceInINR,
+            start, due, status, notes,
+            expenses: [],
+            remarks: []
+          });
+        }
+
+        this.save();
+        ui.closeModal("projectModal");
+      }
+
+      toggleProjectStatus(projectId) {
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (p) {
+          p.status = p.status === "running" ? "done" : "running";
+          this.save();
+        }
+      }
+
+      deleteProject(id) {
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (!p) return;
+        if (confirm(`Are you sure you want to delete "${p.name}"?`)) {
+          this.data.projects = this.data.projects.filter(x => x.id !== id);
+          this.save();
+        }
+      }
+
+      addExpense(projectId, label, amountInput, date) {
+        if (!label || !amountInput) return;
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (!p) return;
+        if (!p.expenses) p.expenses = [];
+
+        // Store in base INR
+        const cur = this.data.currency || "INR";
+        const rate = CURRENCIES[cur]?.rateFromINR || 1;
+        const amtInINR = cur === "INR" ? Number(amountInput) : Number(amountInput) / rate;
+
+        p.expenses.unshift({
+          id: "e_" + Math.random().toString(36).substr(2, 8),
+          label: label.trim(),
+          amount: amtInINR,
+          date: date || new Date().toISOString().split("T")[0]
+        });
+        this.save();
+      }
+
+      removeExpense(projectId, expId) {
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (p && p.expenses) {
+          p.expenses = p.expenses.filter(e => e.id !== expId);
+          this.save();
+        }
+      }
+
+      addRemark(projectId, text, by, photoBase64) {
+        if (!text && !photoBase64) return;
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (!p) return;
+        if (!p.remarks) p.remarks = [];
+
+        const now = new Date();
+        p.remarks.unshift({
+          id: "r_" + Math.random().toString(36).substr(2, 8),
+          by: by || "Team",
+          text: text.trim(),
+          photo: photoBase64 || null,
+          time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          date: now.toISOString()
+        });
+
+        // Trigger Telegram Dispatch
+        if (this.data.botToken && this.data.yourTgId) {
+          this.sendTelegramNotification(`📋 *[OG-Project] ${p.name}*\n👤 *${by || "Team"}*: ${text || "(Attached Photo)"}`);
+        }
+
+        this.save();
+      }
+
+      removeRemark(projectId, remId) {
+        const p = this.data.projects.find(x => x.id === projectId);
+        if (p && p.remarks) {
+          p.remarks = p.remarks.filter(r => r.id !== remId);
+          this.save();
+        }
+      }
+
+      saveTelegramSettings() {
+        this.data.botToken = document.getElementById("tgBotTokenInput").value.trim();
+        this.data.yourTgId = document.getElementById("tgChatIdInput").value.trim();
+        this.save();
+        alert("✅ Telegram configuration saved!");
+      }
+
+      testTelegram() {
+        if (!this.data.botToken || !this.data.yourTgId) {
+          alert("Please input both Bot Token and Chat ID first.");
+          return;
+        }
+        this.sendTelegramNotification("🚀 *OG-Project-Management Live Alert*\nYour Telegram notifications are verified and active!");
+        alert("Ping message dispatched to Telegram!");
+      }
+
+      sendTelegramNotification(msg) {
+        if (!this.data.botToken || !this.data.yourTgId) return;
+        fetch(`https://api.telegram.org/bot${this.data.botToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: this.data.yourTgId,
+            text: msg,
+            parse_mode: "Markdown"
+          })
+        }).catch(err => console.log("Telegram dispatch error", err));
+      }
+
+      addStaff() {
+        const name = document.getElementById("newStaffNameInput").value.trim();
+        if (!name) return;
+        if (!this.data.staff) this.data.staff = [];
+        this.data.staff.push({ id: "s_" + Math.random().toString(36).substr(2, 6), name });
+        document.getElementById("newStaffNameInput").value = "";
+        this.save();
+      }
+
+      removeStaff(id) {
+        if (this.data.staff) {
+          this.data.staff = this.data.staff.filter(s => s.id !== id);
+          this.save();
+        }
+      }
+
+      exportCSV() {
+        const cur = this.data.currency || "INR";
+        const rows = [["Project Name", "Client", "Status", `Budget (${cur})`, `Total Spent (${cur})`, `Remaining (${cur})`, "Start Date", "Due Date"]];
+        (this.data.projects || []).forEach(p => {
+          const spentINR = (p.expenses || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+          const priceConv = Math.round(this.convert(p.price || 0));
+          const spentConv = Math.round(this.convert(spentINR));
+          rows.push([
+            `"${p.name}"`,
+            `"${p.client || ''}"`,
+            p.status,
+            priceConv,
+            spentConv,
+            priceConv - spentConv,
+            p.start || '',
+            p.due || ''
+          ]);
+        });
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `OG_Projects_${cur}_${new Date().toISOString().split("T")[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      exportJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data, null, 2));
+        const dlAnchor = document.createElement("a");
+        dlAnchor.setAttribute("href", dataStr);
+        dlAnchor.setAttribute("download", `OG_Project_Management_Backup_${new Date().toISOString().split("T")[0]}.json`);
+        document.body.appendChild(dlAnchor);
+        dlAnchor.click();
+        dlAnchor.remove();
+      }
+
+      importJSON(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsed = JSON.parse(event.target.result);
+            if (parsed.projects) {
+              this.save(parsed);
+              alert("✅ Backup restored successfully!");
+            }
+          } catch (err) {
+            alert("Invalid JSON file format!");
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    class UIRenderer {
+      formatDate(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      }
+
+      updateFxBadge() {
+        const cur = store.data.currency || "INR";
+        const rateBadge = document.getElementById("fxRateBadge");
+        if (cur === "INR") {
+          const usdRate = (1 / (CURRENCIES.USD.rateFromINR || 0.0119)).toFixed(2);
+          rateBadge.textContent = `⚡ 1 USD = ₹${usdRate}`;
+        } else {
+          const inrPerUnit = (1 / (CURRENCIES[cur]?.rateFromINR || 1)).toFixed(2);
+          rateBadge.textContent = `⚡ 1 ${cur} = ₹${inrPerUnit}`;
+        }
+      }
+
+      switchMainTab(tabId) {
+        document.querySelectorAll(".tab-section").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".nav-tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
+        document.getElementById(`tab-${tabId}`)?.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      renderAll() {
+        document.getElementById("currencySelect").value = store.data.currency || "INR";
+        this.updateFxBadge();
+        this.renderHeroKPIs();
+        this.renderFilterCounts();
+        this.renderProjectsList();
+        this.renderAnalytics();
+        this.renderSettings();
+      }
+
+      renderHeroKPIs() {
+        const { totalBudget, totalSpent, remaining, pct } = store.getTotals();
+        
+        document.getElementById("heroSpentFigure").textContent = `${store.format(totalSpent)} / ${store.format(totalBudget)}`;
+        document.getElementById("heroSubFigure").textContent = `${Math.round(pct)}% consumed • ${store.format(remaining)} available balance`;
+
+        const fill = document.getElementById("heroProgressFill");
+        fill.style.width = `${Math.min(pct, 100)}%`;
+        fill.className = `progress-fill ${pct > 100 ? 'danger' : pct > 80 ? 'warn' : ''}`;
+
+        document.getElementById("heroProgressPct").textContent = `${Math.round(pct)}% of Portfolio Budget Used`;
+        document.getElementById("heroProgressStatus").textContent = pct > 100 ? "🚨 Portfolio Budget Exceeded!" : pct > 80 ? "⚠️ Budget Approaching Limit" : "✅ Budget Health Normal";
+
+        document.getElementById("kpiActiveCount").textContent = (store.data.projects || []).filter(p => p.status === "running").length;
+        document.getElementById("kpiRemainingVal").textContent = store.format(remaining);
+        document.getElementById("kpiTotalBudgetVal").textContent = store.format(totalBudget);
+        document.getElementById("kpiTeamSub").textContent = `${(store.data.staff || []).length} Team Members`;
+      }
+
+      renderFilterCounts() {
+        const projects = store.data.projects || [];
+        document.getElementById("countAll").textContent = projects.length;
+        document.getElementById("countRunning").textContent = projects.filter(p => p.status === "running").length;
+        document.getElementById("countDone").textContent = projects.filter(p => p.status === "done").length;
+        document.getElementById("countCritical").textContent = projects.filter(p => {
+          const spent = (p.expenses || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+          return (Number(p.price) || 0) > 0 && (spent / p.price) >= 0.8;
+        }).length;
+      }
+
+      renderProjectsList() {
+        const container = document.getElementById("projectsList");
+        const query = store.searchQuery;
+        const filter = store.currentFilter;
+
+        let list = (store.data.projects || []).filter(p => {
+          if (filter === "running" && p.status !== "running") return false;
+          if (filter === "done" && p.status !== "done") return false;
+          if (filter === "critical") {
+            const spent = (p.expenses || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+            if ((Number(p.price) || 0) <= 0 || (spent / p.price) < 0.8) return false;
+          }
+          if (query) {
+            const matchName = (p.name || "").toLowerCase().includes(query);
+            const matchClient = (p.client || "").toLowerCase().includes(query);
+            const matchNotes = (p.notes || "").toLowerCase().includes(query);
+            if (!matchName && !matchClient && !matchNotes) return false;
+          }
+          return true;
+        });
+
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📁</div>
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">No projects found</h3>
+              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Create your first project or adjust the filter / search.</p>
+              <button class="btn btn-primary" onclick="ui.openNewProjectModal()">+ Create Project</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(p => this.renderProjectCard(p)).join("");
+      }
+
+      renderProjectCard(p) {
+        const spent = (p.expenses || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+        const price = Number(p.price) || 0;
+        const remaining = price - spent;
+        const pct = price > 0 ? Math.round((spent / price) * 100) : 0;
+        const toneClass = pct > 100 ? "is-danger" : pct > 80 ? "is-warn" : "";
+
+        return `
+          <div class="project-card ${toneClass}" id="card-${p.id}">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-client-tag">${p.client ? this.escape(p.client) : "INTERNAL"}</div>
+                <h3 class="card-title">${this.escape(p.name)}</h3>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="status-badge ${p.status}" onclick="store.toggleProjectStatus('${p.id}')" title="Click to toggle status">
+                  ${p.status === 'running' ? '🔄 Running' : '✅ Delivered'}
+                </span>
+              </div>
+            </div>
+
+            ${p.notes ? `<p class="card-notes">${this.escape(p.notes)}</p>` : ''}
+
+            <div class="card-figures-grid">
+              <div class="card-fig-item">
+                <span class="card-fig-label">Total Budget</span>
+                <span class="card-fig-val">${store.format(price)}</span>
+              </div>
+              <div class="card-fig-item">
+                <span class="card-fig-label">Total Spent</span>
+                <span class="card-fig-val ${pct > 100 ? 'spent-danger' : pct > 80 ? 'spent-warn' : ''}">${store.format(spent)}</span>
+              </div>
+              <div class="card-fig-item">
+                <span class="card-fig-label">Remaining</span>
+                <span class="card-fig-val ${remaining < 0 ? 'spent-danger' : ''}">${store.format(remaining)}</span>
+              </div>
+              <div class="card-fig-item">
+                <span class="card-fig-label">Utilization</span>
+                <span class="card-fig-val ${pct > 100 ? 'spent-danger' : pct > 80 ? 'spent-warn' : ''}">${pct}%</span>
+              </div>
+            </div>
+
+            <div class="card-footer-actions">
+              <div class="card-dates-info">
+                <span>🗓️ Start: <strong>${this.formatDate(p.start)}</strong></span>
+                <span>🏁 Due: <strong>${this.formatDate(p.due)}</strong></span>
+              </div>
+
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="ui.toggleDrawer('${p.id}')">
+                  📋 Expenses & Updates (${(p.expenses || []).length + (p.remarks || []).length})
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="ui.openEditModal('${p.id}')">
+                  ✏️ Edit
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="store.deleteProject('${p.id}')" title="Delete Project">
+                  🗑️
+                </button>
+              </div>
+            </div>
+
+            <!-- Expandable Drawer for Expenses & Remarks -->
+            <div class="card-drawer" id="drawer-${p.id}">
+              <div class="drawer-tabs">
+                <button class="drawer-tab-btn active" onclick="ui.switchDrawerTab('${p.id}', 'expenses')">
+                  💰 Itemized Expenses (${(p.expenses || []).length})
+                </button>
+                <button class="drawer-tab-btn" onclick="ui.switchDrawerTab('${p.id}', 'remarks')">
+                  💬 Team Logs & Photos (${(p.remarks || []).length})
+                </button>
+              </div>
+
+              <!-- Pane 1: Expenses -->
+              <div class="drawer-pane active" id="pane-${p.id}-expenses">
+                <ul class="expense-list">
+                  ${(p.expenses || []).length > 0 ? (p.expenses || []).map(e => `
+                    <li class="expense-item">
+                      <div class="expense-item-info">
+                        <span class="expense-item-label">${this.escape(e.label)}</span>
+                        <span class="expense-item-date">${e.date || '—'}</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="expense-item-amt">${store.format(e.amount)}</span>
+                        <button style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 15px;" onclick="store.removeExpense('${p.id}', '${e.id}')">&times;</button>
+                      </div>
+                    </li>
+                  `).join('') : '<li style="font-size: 11px; color: var(--text-dim); padding: 6px 0;">No expenses logged yet.</li>'}
+                </ul>
+
+                <form onsubmit="event.preventDefault(); ui.submitExpense('${p.id}');" class="expense-form-grid">
+                  <input type="text" class="form-input" id="expLabel-${p.id}" placeholder="Expense description" required />
+                  <input type="number" step="any" class="form-input" id="expAmount-${p.id}" placeholder="Amount (${store.data.currency || 'INR'})" min="0.01" required />
+                  <input type="date" class="form-input" id="expDate-${p.id}" />
+                  <button type="submit" class="btn btn-primary btn-sm">+ Log Cost</button>
+                </form>
+              </div>
+
+              <!-- Pane 2: Remarks & Photos -->
+              <div class="drawer-pane" id="pane-${p.id}-remarks">
+                <div class="remark-list">
+                  ${(p.remarks || []).length > 0 ? (p.remarks || []).map(r => `
+                    <div class="remark-bubble">
+                      <div class="remark-header">
+                        <span class="remark-author">👤 ${this.escape(r.by)}</span>
+                        <span>${r.time} &bull; ${this.formatDate(r.date)}</span>
+                      </div>
+                      <div style="color: var(--text-main); line-height: 1.4;">${this.escape(r.text)}</div>
+                      ${r.photo ? `<img src="${r.photo}" class="remark-img-thumb" onclick="ui.viewPhoto('${r.photo}')" alt="Attachment" />` : ''}
+                      <div style="text-align: right; margin-top: 4px;">
+                        <button style="background: none; border: none; color: var(--text-dim); font-size: 10.5px; cursor: pointer;" onclick="store.removeRemark('${p.id}', '${r.id}')">Delete</button>
+                      </div>
+                    </div>
+                  `).join('') : '<div style="font-size: 11px; color: var(--text-dim); padding: 6px 0;">No team updates yet.</div>'}
+                </div>
+
+                <form onsubmit="event.preventDefault(); ui.submitRemark('${p.id}');" style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <select class="form-select" id="remStaff-${p.id}" style="flex: 1 1 120px;">
+                      <option value="You">👤 You</option>
+                      ${(store.data.staff || []).map(s => `<option value="${this.escape(s.name)}">${this.escape(s.name)}</option>`).join('')}
+                    </select>
+                    <label class="btn btn-secondary btn-sm" style="cursor: pointer;">
+                      📷 Attach Photo
+                      <input type="file" accept="image/*" id="remPhotoFile-${p.id}" style="display: none;" onchange="ui.handlePhotoFile(event, '${p.id}')" />
+                    </label>
+                  </div>
+                  <input type="text" class="form-input" id="remText-${p.id}" placeholder="Write update & notify Telegram..." />
+                  <div id="remPhotoPreview-${p.id}" style="display: none; font-size: 11px; color: var(--accent);">✓ Photo Selected</div>
+                  <button type="submit" class="btn btn-primary btn-sm">Post Update</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        `;
+      }
+
+      renderAnalytics() {
+        const container = document.getElementById("analyticsBarsList");
+        const projects = store.data.projects || [];
+        if (projects.length === 0) {
+          container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted);">No projects available.</div>';
+          return;
+        }
+
+        container.innerHTML = projects.map(p => {
+          const spent = (p.expenses || []).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+          const price = Number(p.price) || 0;
+          const pct = price > 0 ? Math.round((spent / price) * 100) : 0;
+          return `
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
+                <span style="font-weight: 600;">${this.escape(p.name)}</span>
+                <span style="font-family: var(--font-mono);">${store.format(spent)} / ${store.format(price)} (${pct}%)</span>
+              </div>
+              <div class="progress-track" style="height: 6px;">
+                <div class="progress-fill ${pct > 100 ? 'danger' : pct > 80 ? 'warn' : ''}" style="width: ${Math.min(pct, 100)}%;"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderSettings() {
+        document.getElementById("tgBotTokenInput").value = store.data.botToken || "";
+        document.getElementById("tgChatIdInput").value = store.data.yourTgId || "";
+
+        const staffContainer = document.getElementById("settingsTeamList");
+        staffContainer.innerHTML = (store.data.staff || []).map(s => `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-raised); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12.5px;">
+            <span>👤 <strong>${this.escape(s.name)}</strong></span>
+            <button style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 12px;" onclick="store.removeStaff('${s.id}')">Remove</button>
+          </div>
+        `).join('') || '<div style="font-size: 12px; color: var(--text-muted);">No members added yet.</div>';
+      }
+
+      toggleTheme() {
+        const root = document.documentElement;
+        const isDark = root.getAttribute("data-theme") === "dark";
+        root.setAttribute("data-theme", isDark ? "light" : "dark");
+      }
+
+      toggleDrawer(projectId) {
+        const drawer = document.getElementById(`drawer-${projectId}`);
+        drawer.classList.toggle("open");
+      }
+
+      switchDrawerTab(projectId, tab) {
+        const drawer = document.getElementById(`drawer-${projectId}`);
+        drawer.querySelectorAll(".drawer-tab-btn").forEach((b, idx) => {
+          b.classList.toggle("active", (tab === 'expenses' && idx === 0) || (tab === 'remarks' && idx === 1));
+        });
+        drawer.querySelectorAll(".drawer-pane").forEach(p => p.classList.remove("active"));
+        document.getElementById(`pane-${projectId}-${tab}`)?.classList.add("active");
+      }
+
+      openNewProjectModal() {
+        const cur = store.data.currency || "INR";
+        document.getElementById("projectModalTitle").textContent = "Create New Project";
+        document.getElementById("modalBudgetLabel").textContent = `Budget (${cur}) *`;
+        document.getElementById("editProjectId").value = "";
+        document.getElementById("modalProjectName").value = "";
+        document.getElementById("modalProjectClient").value = "";
+        document.getElementById("modalProjectPrice").value = "";
+        document.getElementById("modalProjectStart").value = new Date().toISOString().split("T")[0];
+        document.getElementById("modalProjectDue").value = "";
+        document.getElementById("modalProjectStatus").value = "running";
+        document.getElementById("modalProjectNotes").value = "";
+        document.getElementById("saveProjectBtn").textContent = "Create Project";
+        this.openModal("projectModal");
+      }
+
+      openEditModal(projectId) {
+        const p = store.data.projects.find(x => x.id === projectId);
+        if (!p) return;
+        const cur = store.data.currency || "INR";
+        const convertedPrice = Math.round(store.convert(p.price || 0));
+
+        document.getElementById("projectModalTitle").textContent = "Edit Project";
+        document.getElementById("modalBudgetLabel").textContent = `Budget (${cur}) *`;
+        document.getElementById("editProjectId").value = p.id;
+        document.getElementById("modalProjectName").value = p.name;
+        document.getElementById("modalProjectClient").value = p.client || "";
+        document.getElementById("modalProjectPrice").value = convertedPrice;
+        document.getElementById("modalProjectStart").value = p.start || "";
+        document.getElementById("modalProjectDue").value = p.due || "";
+        document.getElementById("modalProjectStatus").value = p.status || "running";
+        document.getElementById("modalProjectNotes").value = p.notes || "";
+        document.getElementById("saveProjectBtn").textContent = "Save Changes";
+        this.openModal("projectModal");
+      }
+
+      openModal(id) { document.getElementById(id).classList.add("open"); }
+      closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+      submitExpense(projectId) {
+        const label = document.getElementById(`expLabel-${projectId}`).value;
+        const amt = document.getElementById(`expAmount-${projectId}`).value;
+        const date = document.getElementById(`expDate-${projectId}`).value;
+        store.addExpense(projectId, label, amt, date);
+      }
+
+      handlePhotoFile(e, projectId) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          document.getElementById(`remPhotoPreview-${projectId}`).dataset.photoBase64 = event.target.result;
+          document.getElementById(`remPhotoPreview-${projectId}`).style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      submitRemark(projectId) {
+        const text = document.getElementById(`remText-${projectId}`).value;
+        const by = document.getElementById(`remStaff-${projectId}`).value;
+        const photoEl = document.getElementById(`remPhotoPreview-${projectId}`);
+        const photoBase64 = photoEl.dataset.photoBase64 || null;
+
+        store.addRemark(projectId, text, by, photoBase64);
+        document.getElementById(`remText-${projectId}`).value = "";
+        photoEl.style.display = "none";
+        delete photoEl.dataset.photoBase64;
+      }
+
+      viewPhoto(src) {
+        document.getElementById("photoModalDisplay").src = src;
+        this.openModal("photoViewerModal");
+      }
+
+      escape(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+    }
+
+    const store = new StateManager();
+    const ui = new UIRenderer();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      ui.renderAll();
+    });
+  </script>
+</body>
+</html>

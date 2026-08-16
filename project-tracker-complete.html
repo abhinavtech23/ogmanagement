@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Tracker - Budget & Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sage: #E3E9E1;
+      --paper: #FAFBF9;
+      --ink: #16201A;
+      --moss: #63756B;
+      --line: #C8D2C6;
+      --pine: #14614E;
+      --brass: #A2740F;
+      --madder: #8B2A34;
+      --slate: #4A5D67;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--sage);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .pt-root {
+      padding: 28px 22px 40px;
+      min-height: 100vh;
+    }
+
+    .pt-eyebrow {
+      font-family: 'IBM Plex Sans Condensed', ui-sans-serif, sans-serif;
+      font-weight: 700; font-size: 11px; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--moss); margin: 0 0 8px;
+    }
+
+    /* Hero */
+    .pt-hero { max-width: 1200px; margin: 0 auto 26px; }
+    .pt-hero__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+    .pt-hero__figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+    .pt-hero__spent {
+      font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      font-weight: 500; font-size: clamp(34px, 6vw, 56px);
+      letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums;
+    }
+    .pt-hero__of {
+      font-family: 'IBM Plex Sans Condensed', sans-serif;
+      font-size: 15px; font-weight: 600; color: var(--moss); letter-spacing: .01em;
+    }
+    .pt-hero__controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    .pt-meter { position: relative; height: 10px; background: rgba(22,32,26,.10); border-radius: 2px; overflow: hidden; margin-top: 20px; }
+    .pt-meter__fill { height: 100%; background: var(--pine); transition: width .55s cubic-bezier(.2,.7,.3,1); }
+    .pt-meter.is-warn .pt-meter__fill { background: var(--brass); }
+    .pt-meter.is-over .pt-meter__fill { background: var(--madder); }
+
+    .pt-hero__legend {
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      margin-top: 9px; font-size: 12.5px; color: var(--moss);
+    }
+
+    /* Toolbar */
+    .pt-toolbar {
+      max-width: 1200px; margin: 0 auto 16px; display: flex; gap: 14px;
+      justify-content: space-between; align-items: center; flex-wrap: wrap;
+      padding-top: 16px; border-top: 1px solid var(--line);
+    }
+    .pt-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pt-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: inherit; font-size: 12.5px; color: var(--moss);
+      background: transparent; border: 1px solid transparent; border-radius: 999px;
+      padding: 6px 11px; cursor: pointer; transition: background .15s, color .15s;
+    }
+    .pt-chip:hover { background: rgba(22,32,26,.05); }
+    .pt-chip.is-active { background: var(--ink); color: var(--paper); }
+    .pt-chip__n { font-family: 'IBM Plex Mono', monospace; font-size: 11px; opacity: .65; }
+
+    .pt-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex: none; }
+    .pt-dot--running { background: var(--pine); }
+    .pt-dot--done { background: #2E4238; }
+
+    .pt-search {
+      font-family: inherit; font-size: 13px; color: var(--ink);
+      background: var(--paper); border: 1px solid var(--line); border-radius: 3px;
+      padding: 8px 12px; min-width: 240px; flex: 1 1 240px; max-width: 320px;
+    }
+    .pt-search::placeholder { color: #9AA79C; }
+
+    /* Cards */
+    .pt-list { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+    .pt-card {
+      position: relative; background: var(--paper); border: 1px solid var(--line);
+      border-radius: 4px; overflow: hidden;
+    }
+    .pt-card__tint {
+      position: absolute; inset: 0 auto 0 0; background: var(--pine); opacity: .07;
+      transition: width .55s cubic-bezier(.2,.7,.3,1); pointer-events: none;
+    }
+    .pt-card.is-warn .pt-card__tint { background: var(--brass); opacity: .09; }
+    .pt-card.is-over .pt-card__tint { background: var(--madder); opacity: .11; }
+    .pt-card__inner { position: relative; padding: 16px 18px 14px; }
+
+    .pt-card__bar { height: 3px; background: rgba(22,32,26,.08); position: relative; }
+    .pt-card__barFill { height: 100%; background: var(--pine); transition: width .55s cubic-bezier(.2,.7,.3,1); }
+    .pt-card.is-warn .pt-card__barFill { background: var(--brass); }
+    .pt-card.is-over .pt-card__barFill { background: var(--madder); }
+
+    .pt-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+    .pt-card__client {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 10.5px; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--moss); margin: 0 0 3px;
+    }
+    .pt-card__name {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 20px; font-weight: 600;
+      margin: 0; letter-spacing: -.005em; line-height: 1.2;
+    }
+
+    .pt-figs { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 14px; }
+    .pt-fig { display: flex; flex-direction: column; gap: 2px; }
+    .pt-fig__k {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--moss);
+    }
+    .pt-fig__v {
+      font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500;
+      font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+    }
+    .pt-card.is-over .pt-fig--pct .pt-fig__v { color: var(--madder); }
+    .pt-card.is-warn .pt-fig--pct .pt-fig__v { color: var(--brass); }
+
+    .pt-card__actions { display: flex; gap: 16px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(22,32,26,.09); flex-wrap: wrap; }
+
+    /* Drawer/Tabs */
+    .pt-drawer { margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); display: none; }
+    .pt-drawer.is-open { display: block; }
+
+    .pt-tabs { display: flex; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(22,32,26,.09); flex-wrap: wrap; }
+    .pt-tab {
+      background: none; border: 0; color: var(--moss); cursor: pointer; padding: 9px 12px;
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-weight: 600; font-size: 13px;
+      border-bottom: 2px solid transparent; transition: color .15s;
+    }
+    .pt-tab:hover { color: var(--ink); }
+    .pt-tab.is-active { color: var(--ink); border-bottom-color: var(--ink); }
+
+    .pt-tabpane { display: none; }
+    .pt-tabpane.is-active { display: block; }
+
+    /* Budget & Expenses */
+    .pt-budget {
+      background: rgba(22,32,26,.04); border-radius: 3px; padding: 12px;
+      margin-bottom: 14px;
+    }
+    .pt-budget__row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; font-size: 13px;
+    }
+    .pt-budget__row:last-child { margin-bottom: 0; }
+    .pt-budget__label { color: var(--moss); font-weight: 500; }
+    .pt-budget__value { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .pt-expenses { list-style: none; margin: 0 0 12px; padding: 0; }
+    .pt-exp__item {
+      display: grid; grid-template-columns: 1fr auto auto 24px; gap: 12px; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(22,32,26,.07); font-size: 13px;
+    }
+    .pt-exp__label { color: var(--ink); font-weight: 500; }
+    .pt-exp__date { color: var(--moss); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+    .pt-exp__amt { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+    .pt-exp__del { background: none; border: 0; color: var(--moss); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; }
+    .pt-exp__del:hover { color: var(--madder); }
+
+    .pt-addExp {
+      display: flex; gap: 8px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid rgba(22,32,26,.07);
+    }
+    .pt-addExp .pt-input { flex: 1 1 130px; min-width: 0; font-size: 12px; }
+
+    /* Remarks/Comments */
+    .pt-remarks__title {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--moss); margin: 12px 0 12px;
+    }
+    .pt-remark {
+      background: rgba(22,32,26,.04); border-radius: 3px; padding: 11px;
+      margin-bottom: 8px; font-size: 13px; line-height: 1.5;
+    }
+    .pt-remark__meta {
+      display: flex; justify-content: space-between; gap: 8px; margin-bottom: 5px;
+      font-size: 11px; color: var(--moss);
+    }
+    .pt-remark__author { font-weight: 600; }
+    .pt-remark__time { font-family: 'IBM Plex Mono', monospace; }
+    .pt-remark__text { color: var(--ink); margin: 0; word-wrap: break-word; }
+    .pt-remark__img { max-width: 100%; max-height: 200px; border-radius: 3px; margin-top: 8px; cursor: pointer; }
+
+    .pt-addRemark {
+      display: flex; flex-direction: column; gap: 8px; margin-top: 12px;
+      padding-top: 12px; border-top: 1px solid rgba(22,32,26,.07);
+    }
+
+    /* Staff */
+    .pt-staff {
+      background: rgba(22,32,26,.04); border-radius: 3px; padding: 11px;
+      margin-bottom: 12px; font-size: 12px;
+    }
+    .pt-staff__title {
+      font-weight: 600; color: var(--ink); margin-bottom: 6px;
+    }
+    .pt-staff__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .pt-staff__item {
+      background: var(--paper); border: 1px solid var(--line); border-radius: 999px;
+      padding: 4px 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .pt-staff__avatar { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: var(--paper); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; }
+
+    /* Controls */
+    .pt-btn {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-weight: 600; font-size: 13.5px;
+      letter-spacing: .02em; padding: 9px 16px; border-radius: 3px; cursor: pointer;
+      background: var(--paper); color: var(--ink); border: 1px solid var(--ink);
+      transition: background .15s, color .15s, opacity .15s;
+    }
+    .pt-btn:hover { background: rgba(22,32,26,.07); }
+    .pt-btn--primary { background: var(--ink); color: var(--paper); }
+    .pt-btn--primary:hover { background: #253429; }
+    .pt-btn--small { padding: 8px 13px; font-size: 12.5px; }
+
+    .pt-link {
+      font-family: inherit; font-size: 12.5px; color: var(--moss); background: none;
+      border: 0; padding: 0; cursor: pointer; text-underline-offset: 3px;
+    }
+    .pt-link:hover { color: var(--ink); text-decoration: underline; }
+
+    .pt-select, .pt-input {
+      font-family: inherit; font-size: 13.5px; color: var(--ink); width: 100%;
+      background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 9px 11px;
+    }
+    .pt-input::placeholder { color: #9AA79C; }
+    .pt-textarea { resize: vertical; line-height: 1.5; }
+
+    .pt-fileInput {
+      position: relative; display: inline-block;
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-weight: 600; font-size: 12.5px;
+      letter-spacing: .02em; padding: 8px 13px; border-radius: 3px; cursor: pointer;
+      background: var(--paper); color: var(--ink); border: 1px solid var(--ink);
+    }
+    .pt-fileInput:hover { background: rgba(22,32,26,.07); }
+    .pt-fileInput input[type="file"] { display: none; }
+
+    :focus-visible { outline: 2px solid var(--pine); outline-offset: 2px; }
+
+    /* Footer */
+    .pt-footer {
+      max-width: 1200px; margin: 26px auto 0; padding-top: 14px; border-top: 1px solid var(--line);
+      display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--moss);
+    }
+
+    /* Modal */
+    .pt-overlay {
+      position: fixed; inset: 0; background: rgba(18,26,20,.42);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 5vh 18px; overflow-y: auto; z-index: 50;
+    }
+    .pt-overlay.is-open { display: flex; }
+    
+    .pt-sheet {
+      background: var(--paper); border: 1px solid var(--line); border-radius: 5px;
+      width: 100%; max-width: 600px; padding: 24px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 18px 50px rgba(18,26,20,.22);
+    }
+    .pt-sheet__head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .pt-field { display: flex; flex-direction: column; gap: 5px; }
+    .pt-field > span {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 10.5px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--moss);
+    }
+    .pt-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pt-sheet__foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+
+    .pt-settings {
+      max-width: 1200px; margin: 0 auto;
+      background: var(--paper); border: 1px solid var(--line); border-radius: 4px;
+      padding: 20px; margin-bottom: 20px;
+    }
+    .pt-settings__title {
+      font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 16px; font-weight: 600;
+      margin: 0 0 14px; color: var(--ink);
+    }
+    .pt-settings__form { display: flex; flex-direction: column; gap: 12px; }
+
+    /* Responsive */
+    @media (max-width: 620px) {
+      .pt-root { padding: 22px 14px 32px; }
+      .pt-row2 { grid-template-columns: 1fr; }
+      .pt-addExp { flex-direction: column; }
+      .pt-exp__item { grid-template-columns: 1fr auto 24px; }
+      .pt-exp__date { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pt-root">
+    <header class="pt-hero">
+      <div class="pt-hero__top">
+        <div>
+          <p class="pt-eyebrow">Project Tracker</p>
+          <h1 class="pt-hero__figure">
+            <span class="pt-hero__spent" id="heroSpent">₹0</span>
+            <span class="pt-hero__of" id="heroOf">Total Budget & Spent</span>
+          </h1>
+        </div>
+        <div class="pt-hero__controls">
+          <select class="pt-select" id="currencySelect" style="max-width: 120px;">
+            <option value="INR">₹ INR</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+          </select>
+          <button class="pt-btn pt-btn--primary" onclick="app.openEditor(null)">+ Project</button>
+          <button class="pt-link" onclick="app.toggleSettings()">⚙️ Settings</button>
+        </div>
+      </div>
+
+      <div class="pt-meter" id="heroMeter">
+        <div class="pt-meter__fill" style="width: 0%"></div>
+      </div>
+    </header>
+
+    <!-- Settings Panel -->
+    <div class="pt-settings" id="settingsPanel" style="display: none;">
+      <h3 class="pt-settings__title">⚙️ Telegram Settings (Optional)</h3>
+      <div class="pt-settings__form">
+        <div class="pt-field">
+          <span>Bot Token</span>
+          <input class="pt-input" id="botToken" placeholder="Get from @BotFather on Telegram" />
+        </div>
+
+        <div class="pt-field">
+          <span>Your Telegram ID</span>
+          <input class="pt-input" id="yourTelegramId" placeholder="Get from @userinfobot" />
+        </div>
+
+        <div style="background: rgba(22,32,26,.04); border-radius: 3px; padding: 12px; font-size: 12px; color: var(--moss); line-height: 1.5;">
+          <strong>📖 Setup instructions:</strong><br/>
+          Check the chat above for detailed "How to Setup Telegram" guide with step-by-step instructions.
+        </div>
+
+        <h4 style="margin: 14px 0 8px; font-size: 13px; font-family: 'IBM Plex Sans Condensed', sans-serif; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--moss);">
+          👥 Team Members
+        </h4>
+
+        <div id="staffList" style="margin-bottom: 12px;"></div>
+
+        <div class="pt-field">
+          <span>Add Staff Member</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <input class="pt-input" id="staffName" placeholder="Staff name" style="flex: 1 1 120px; min-width: 0;" />
+            <input class="pt-input" id="staffTgId" placeholder="Their Telegram ID" style="flex: 1 1 120px; min-width: 0;" />
+            <button class="pt-btn" onclick="app.addStaffMember()">Add</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="pt-btn pt-btn--primary" onclick="app.saveSettings()">Save Settings</button>
+          <button class="pt-btn" onclick="app.toggleSettings()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-toolbar">
+      <div class="pt-chips" id="filterChips"></div>
+      <input class="pt-search" id="searchInput" placeholder="Search project" />
+    </div>
+
+    <div id="mainContent"></div>
+
+    <footer class="pt-footer">
+      <span id="saveStatus">Saves automatically</span>
+    </footer>
+  </div>
+
+  <!-- Photo Modal -->
+  <div class="pt-overlay" id="photoModal" onclick="if (event.target === this) app.closePhotoModal()">
+    <div class="pt-sheet" onclick="event.stopPropagation()">
+      <div class="pt-sheet__head">
+        <p class="pt-eyebrow">View Photo</p>
+        <button class="pt-link" onclick="app.closePhotoModal()">Close</button>
+      </div>
+      <img id="photoDisplay" style="max-width: 100%; border-radius: 3px;" />
+    </div>
+  </div>
+
+  <!-- Edit Project Modal -->
+  <div class="pt-overlay" id="modalOverlay" onclick="if (event.target === this) app.closeEditor()">
+    <div class="pt-sheet" onclick="event.stopPropagation()">
+      <div class="pt-sheet__head">
+        <p class="pt-eyebrow" id="modalTitle">New project</p>
+        <button class="pt-link" onclick="app.closeEditor()">Close</button>
+      </div>
+
+      <label class="pt-field">
+        <span>Project name</span>
+        <input class="pt-input" id="editorName" placeholder="Website Redesign" />
+      </label>
+
+      <div class="pt-row2">
+        <label class="pt-field">
+          <span>Client/Company</span>
+          <input class="pt-input" id="editorClient" placeholder="ABC Corp" />
+        </label>
+        <label class="pt-field">
+          <span>Total Budget</span>
+          <input class="pt-input" id="editorPrice" inputmode="decimal" placeholder="150000" />
+        </label>
+      </div>
+
+      <div class="pt-row2">
+        <label class="pt-field">
+          <span>Start date</span>
+          <input class="pt-input" id="editorStart" type="date" />
+        </label>
+        <label class="pt-field">
+          <span>Due date</span>
+          <input class="pt-input" id="editorDue" type="date" />
+        </label>
+      </div>
+
+      <label class="pt-field">
+        <span>Notes</span>
+        <textarea class="pt-input pt-textarea" id="editorNotes" rows="3" placeholder="Project details..."></textarea>
+      </label>
+
+      <div class="pt-sheet__foot">
+        <button class="pt-btn" onclick="app.closeEditor()">Cancel</button>
+        <button class="pt-btn pt-btn--primary" id="editorSaveBtn" onclick="app.saveEditor()">Add project</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CURRENCIES = {
+      INR: { symbol: "₹", locale: "en-IN" },
+      USD: { symbol: "$", locale: "en-US" },
+      EUR: { symbol: "€", locale: "de-DE" },
+    };
+
+    const STATUSES = [
+      { id: "running", label: "🔄 Running" },
+      { id: "done", label: "✅ Delivered" },
+    ];
+
+    class ProjectTracker {
+      constructor() {
+        this.projects = [];
+        this.staff = [];
+        this.currency = "INR";
+        this.botToken = "";
+        this.yourTgId = "";
+        this.currentFilter = "all";
+        this.searchQuery = "";
+        this.editingId = null;
+        this.load();
+        this.setupEventListeners();
+        this.render();
+      }
+
+      load() {
+        const data = localStorage.getItem("pt-data");
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            this.projects = parsed.projects || [];
+            this.currency = parsed.currency || "INR";
+            this.staff = parsed.staff || [];
+            this.botToken = parsed.botToken || "";
+            this.yourTgId = parsed.yourTgId || "";
+          } catch (e) {
+            console.error("Failed to load", e);
+          }
+        }
+      }
+
+      save() {
+        localStorage.setItem("pt-data", JSON.stringify({
+          projects: this.projects,
+          currency: this.currency,
+          staff: this.staff,
+          botToken: this.botToken,
+          yourTgId: this.yourTgId,
+        }));
+      }
+
+      setupEventListeners() {
+        document.getElementById("currencySelect").addEventListener("change", (e) => {
+          this.currency = e.target.value;
+          this.save();
+          this.render();
+        });
+
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+          this.searchQuery = e.target.value.toLowerCase();
+          this.render();
+        });
+
+        document.getElementById("currencySelect").value = this.currency;
+      }
+
+      uid() {
+        return Math.random().toString(36).slice(2, 10);
+      }
+
+      escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      formatMoney(amount) {
+        const cur = CURRENCIES[this.currency];
+        return (
+          cur.symbol +
+          new Intl.NumberFormat(cur.locale, { maximumFractionDigits: 0 }).format(
+            Math.round(Number(amount) || 0)
+          )
+        );
+      }
+
+      formatDate(iso) {
+        if (!iso) return null;
+        const d = new Date(iso);
+        const cur = CURRENCIES[this.currency];
+        return d.toLocaleDateString(cur.locale, { day: "numeric", month: "short" });
+      }
+
+      formatTime(date) {
+        return date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      }
+
+      getInitials(name) {
+        return (name || "?").trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?";
+      }
+
+      calculateTotals() {
+        const value = this.projects.reduce((s, p) => s + (Number(p.price) || 0), 0);
+        const spent = this.projects.reduce((s, p) => s + this.getSpent(p), 0);
+        return { value, spent, left: value - spent, pct: value > 0 ? (spent / value) * 100 : 0 };
+      }
+
+      getSpent(project) {
+        return (project.expenses || []).reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+      }
+
+      getTone(pct) {
+        return pct > 100 ? "over" : pct > 80 ? "warn" : "ok";
+      }
+
+      render() {
+        this.renderHero();
+        this.renderFilters();
+        this.renderCards();
+      }
+
+      renderHero() {
+        const totals = this.calculateTotals();
+        const meter = document.getElementById("heroMeter");
+        const meterFill = meter.querySelector(".pt-meter__fill");
+        meter.className = `pt-meter is-${this.getTone(totals.pct)}`;
+        meterFill.style.width = `${Math.min(totals.pct, 100)}%`;
+
+        document.getElementById("heroSpent").textContent = `${this.formatMoney(totals.spent)} / ${this.formatMoney(totals.value)}`;
+        document.getElementById("heroOf").textContent = `${Math.round(totals.pct)}% spent • ${this.formatMoney(totals.left)} remaining`;
+      }
+
+      renderFilters() {
+        const chipsHtml = `
+          <button class="pt-chip ${this.currentFilter === "all" ? "is-active" : ""}" onclick="app.setFilter('all')">
+            All <span class="pt-chip__n">${this.projects.length}</span>
+          </button>
+          ${STATUSES.map((s) => {
+            const count = this.projects.filter((p) => p.status === s.id).length;
+            return `
+              <button class="pt-chip ${this.currentFilter === s.id ? "is-active" : ""}" onclick="app.setFilter('${s.id}')">
+                ${s.label} <span class="pt-chip__n">${count}</span>
+              </button>
+            `;
+          }).join("")}
+        `;
+        document.getElementById("filterChips").innerHTML = chipsHtml;
+      }
+
+      renderCards() {
+        const visible = this.projects.filter(p =>
+          (this.currentFilter === "all" || p.status === this.currentFilter) &&
+          (this.searchQuery === "" || p.name.toLowerCase().includes(this.searchQuery) || p.client.toLowerCase().includes(this.searchQuery))
+        );
+
+        const mainContent = document.getElementById("mainContent");
+
+        if (this.projects.length === 0) {
+          mainContent.innerHTML = `
+            <div style="max-width: 1200px; margin: 0 auto; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 34px 30px;">
+              <h2 style="font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 24px; font-weight: 600; color: var(--ink); margin: 0 0 8px;">Get started</h2>
+              <p style="margin: 0 0 20px; color: var(--moss);">Add your first project and start tracking budget & team updates.</p>
+              <button class="pt-btn pt-btn--primary" onclick="app.openEditor(null)">+ Create Project</button>
+            </div>
+          `;
+          return;
+        }
+
+        const cardsHtml = visible.map((p) => this.renderCard(p)).join("");
+        mainContent.innerHTML = `<div class="pt-list">${cardsHtml}</div>`;
+
+        visible.forEach((p) => {
+          const btn = document.querySelector(`[data-toggle="${p.id}"]`);
+          if (btn) btn.addEventListener("click", () => this.toggleDrawer(p.id));
+
+          // Tab switching
+          const tabs = document.querySelectorAll(`[data-tabs-project="${p.id}"] .pt-tab`);
+          const panes = document.querySelectorAll(`[data-drawer="${p.id}"] .pt-tabpane`);
+          tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => {
+              tabs.forEach(t => t.classList.remove("is-active"));
+              panes.forEach(pane => pane.classList.remove("is-active"));
+              tab.classList.add("is-active");
+              panes[index]?.classList.add("is-active");
+            });
+          });
+
+          // Expense handlers
+          const expBtn = document.querySelector(`[data-add-exp="${p.id}"]`);
+          if (expBtn) {
+            expBtn.addEventListener("click", () => {
+              const label = document.querySelector(`[data-exp-label="${p.id}"]`);
+              const amount = document.querySelector(`[data-exp-amount="${p.id}"]`);
+              const date = document.querySelector(`[data-exp-date="${p.id}"]`);
+              if (this.addExpense(p.id, label.value, amount.value, date.value)) {
+                label.value = "";
+                amount.value = "";
+                date.value = "";
+                this.render();
+              }
+            });
+          }
+
+          // Delete expenses
+          document.querySelectorAll(`[data-del-exp="${p.id}"]`).forEach(btn => {
+            btn.addEventListener("click", (e) => {
+              const expId = e.target.dataset.expId;
+              this.removeExpense(p.id, expId);
+            });
+          });
+
+          // Remark handlers
+          const remBtn = document.querySelector(`[data-add-rem="${p.id}"]`);
+          if (remBtn) {
+            remBtn.addEventListener("click", () => {
+              const text = document.querySelector(`[data-rem-text="${p.id}"]`);
+              const staff = document.querySelector(`[data-rem-staff="${p.id}"]`);
+              const photo = document.querySelector(`[data-rem-photo="${p.id}"]`);
+              if (this.addRemark(p.id, text.value, staff.value, photo)) {
+                text.value = "";
+                photo.value = "";
+                photo.dataset.photoData = null;
+                this.render();
+              }
+            });
+          }
+
+          // Delete remarks
+          document.querySelectorAll(`[data-del-rem="${p.id}"]`).forEach(btn => {
+            btn.addEventListener("click", (e) => {
+              const remId = e.target.dataset.remId;
+              this.removeRemark(p.id, remId);
+            });
+          });
+
+          // Photo clicks
+          document.querySelectorAll(`[data-photo="${p.id}"]`).forEach(img => {
+            img.addEventListener("click", () => {
+              document.getElementById("photoDisplay").src = img.src;
+              document.getElementById("photoModal").classList.add("is-open");
+            });
+          });
+
+          // Delete project
+          document.querySelector(`[data-delete="${p.id}"]`)?.addEventListener("click", () => this.deleteProject(p.id));
+        });
+      }
+
+      renderCard(p) {
+        const spent = this.getSpent(p);
+        const price = Number(p.price) || 0;
+        const remaining = price - spent;
+        const pct = price > 0 ? (spent / price) * 100 : 0;
+        const t = this.getTone(pct);
+        const status = STATUSES.find(s => s.id === p.status) || STATUSES[0];
+
+        const expensesHtml = `
+          <div>
+            <h4 class="pt-remarks__title">💰 Budget</h4>
+            <div class="pt-budget">
+              <div class="pt-budget__row">
+                <span class="pt-budget__label">Total Budget</span>
+                <span class="pt-budget__value">${this.formatMoney(price)}</span>
+              </div>
+              <div class="pt-budget__row">
+                <span class="pt-budget__label">Spent</span>
+                <span class="pt-budget__value" style="${spent > price * 0.8 ? 'color: var(--brass);' : ''}">${this.formatMoney(spent)}</span>
+              </div>
+              <div class="pt-budget__row" style="font-weight: 600; border-top: 1px solid rgba(22,32,26,.07); padding-top: 8px; margin-top: 8px;">
+                <span class="pt-budget__label">Remaining</span>
+                <span class="pt-budget__value" style="${remaining < 0 ? 'color: var(--madder);' : 'color: var(--pine);'}">${this.formatMoney(Math.abs(remaining))} ${remaining < 0 ? '(OVER)' : ''}</span>
+              </div>
+            </div>
+
+            ${(p.expenses || []).length > 0 ? `
+              <h4 class="pt-remarks__title">📝 Expense Breakdown</h4>
+              <ul class="pt-expenses">
+                ${(p.expenses || []).sort((a, b) => (b.date || '').localeCompare(a.date || '')).map((e) => `
+                  <li class="pt-exp__item">
+                    <span class="pt-exp__label">${this.escapeHtml(e.label)}</span>
+                    <span class="pt-exp__date">${this.formatDate(e.date) || '—'}</span>
+                    <span class="pt-exp__amt">${this.formatMoney(e.amount)}</span>
+                    <button class="pt-exp__del" data-del-exp="${p.id}" data-exp-id="${e.id}">×</button>
+                  </li>
+                `).join("")}
+              </ul>
+            ` : ""}
+
+            <div class="pt-addExp">
+              <input class="pt-input" data-exp-label="${p.id}" placeholder="What for?" />
+              <input class="pt-input" data-exp-amount="${p.id}" inputmode="decimal" placeholder="Amount" />
+              <input class="pt-input" type="date" data-exp-date="${p.id}" />
+              <button class="pt-btn pt-btn--small" data-add-exp="${p.id}">Log Expense</button>
+            </div>
+          </div>
+        `;
+
+        const remarksHtml = `
+          <div>
+            <h4 class="pt-remarks__title">📋 Team Updates</h4>
+            ${(p.remarks || []).length > 0 ? `
+              <div style="margin-bottom: 12px;">
+                ${(p.remarks || []).reverse().map((r) => `
+                  <div class="pt-remark">
+                    <div class="pt-remark__meta">
+                      <span class="pt-remark__author">👤 ${this.escapeHtml(r.by)}</span>
+                      <span class="pt-remark__time">${r.time}</span>
+                    </div>
+                    <p class="pt-remark__text">${this.escapeHtml(r.text)}</p>
+                    ${r.photo ? `<img src="${r.photo}" class="pt-remark__img" data-photo="${p.id}" />` : ""}
+                    <button class="pt-exp__del" data-del-rem="${p.id}" data-rem-id="${r.id}" style="margin-top: 8px;">Delete</button>
+                  </div>
+                `).join("")}
+              </div>
+            ` : `<p style="font-size: 12px; color: var(--moss);">No updates yet</p>`}
+
+            <div class="pt-addRemark">
+              <select class="pt-input" data-rem-staff="${p.id}" style="font-size: 12px;">
+                <option value="You">You (Self)</option>
+                ${(this.staff || []).map((s) => `<option value="${s.name}">${this.escapeHtml(s.name)}</option>`).join("")}
+              </select>
+              <textarea class="pt-input pt-textarea" data-rem-text="${p.id}" placeholder="What's the update?" rows="2" style="font-size: 12px;"></textarea>
+              <div style="display: flex; gap: 8px;">
+                <label class="pt-fileInput">
+                  📷 Add Photo
+                  <input type="file" accept="image/*" data-rem-photo="${p.id}" onchange="app.handlePhotoSelect(event)" />
+                </label>
+                <button class="pt-btn pt-btn--small" data-add-rem="${p.id}">Post Update</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const staffHtml = (p.staff || []).length > 0
+          ? `
+            <div class="pt-staff">
+              <div class="pt-staff__title">👥 Team</div>
+              <ul class="pt-staff__list">
+                ${(p.staff || []).map((s) => `
+                  <li class="pt-staff__item">
+                    <div class="pt-staff__avatar">${this.getInitials(s.name)}</div>
+                    <span>${this.escapeHtml(s.name)}</span>
+                  </li>
+                `).join("")}
+              </ul>
+            </div>
+          ` : "";
+
+        return `
+          <article class="pt-card is-${t}">
+            <div class="pt-card__tint" style="width: ${Math.min(pct, 100)}%"></div>
+            <div class="pt-card__inner">
+              <div class="pt-card__head">
+                <div>
+                  ${p.client ? `<p class="pt-card__client">${this.escapeHtml(p.client)}</p>` : ""}
+                  <h3 class="pt-card__name">${this.escapeHtml(p.name)}</h3>
+                </div>
+              </div>
+
+              <div class="pt-figs">
+                <div class="pt-fig">
+                  <span class="pt-fig__k">Budget</span>
+                  <span class="pt-fig__v">${this.formatMoney(price)}</span>
+                </div>
+                <div class="pt-fig">
+                  <span class="pt-fig__k">Spent</span>
+                  <span class="pt-fig__v">${this.formatMoney(spent)}</span>
+                </div>
+                <div class="pt-fig pt-fig--pct">
+                  <span class="pt-fig__k">Used</span>
+                  <span class="pt-fig__v">${Math.round(pct)}%</span>
+                </div>
+              </div>
+
+              <div class="pt-card__actions">
+                <button class="pt-link" data-toggle="${p.id}">📊 Budget & Updates</button>
+                <button class="pt-link" onclick="app.openEditor('${p.id}')">Edit</button>
+                <button class="pt-link" data-delete="${p.id}">Delete</button>
+              </div>
+
+              <div class="pt-drawer" data-drawer="${p.id}">
+                ${staffHtml}
+
+                <div class="pt-tabs" data-tabs-project="${p.id}">
+                  <button class="pt-tab is-active" data-tab="budget">💰 Budget</button>
+                  <button class="pt-tab" data-tab="updates">📋 Updates</button>
+                </div>
+
+                <div class="pt-tabpane is-active" data-pane="budget">
+                  ${expensesHtml}
+                </div>
+
+                <div class="pt-tabpane" data-pane="updates">
+                  ${remarksHtml}
+                </div>
+              </div>
+            </div>
+            <div class="pt-card__bar">
+              <div class="pt-card__barFill" style="width: ${Math.min(pct, 100)}%"></div>
+            </div>
+          </article>
+        `;
+      }
+
+      handlePhotoSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          event.target.dataset.photoData = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      addExpense(projectId, label, amount, date) {
+        if (!label.trim() || !amount) return false;
+        const project = this.projects.find((p) => p.id === projectId);
+        if (!project) return false;
+        if (!project.expenses) project.expenses = [];
+        project.expenses.push({
+          id: this.uid(),
+          label: label.trim(),
+          amount: Number(amount),
+          date: date || "",
+        });
+        this.save();
+        return true;
+      }
+
+      removeExpense(projectId, expenseId) {
+        const project = this.projects.find((p) => p.id === projectId);
+        if (project && project.expenses) {
+          project.expenses = project.expenses.filter((e) => e.id !== expenseId);
+          this.save();
+          this.render();
+        }
+      }
+
+      addRemark(projectId, text, staff, photoInput) {
+        if (!text.trim() && !photoInput?.dataset?.photoData) return false;
+        const project = this.projects.find((p) => p.id === projectId);
+        if (!project) return false;
+        if (!project.remarks) project.remarks = [];
+
+        const now = new Date();
+        const remark = {
+          id: this.uid(),
+          by: staff,
+          text: text.trim(),
+          time: this.formatTime(now),
+          date: now.toISOString(),
+          photo: photoInput?.dataset?.photoData || null,
+        };
+
+        project.remarks.unshift(remark);
+
+        // Send Telegram
+        if (this.botToken && this.yourTgId) {
+          const msg = `📋 *${project.name}*\n👤 ${staff}\n${text || "(Photo shared)"}`;
+          this.sendTelegram(msg);
+        }
+
+        this.save();
+        return true;
+      }
+
+      removeRemark(projectId, reminderId) {
+        const project = this.projects.find((p) => p.id === projectId);
+        if (project && project.remarks) {
+          project.remarks = project.remarks.filter((r) => r.id !== reminderId);
+          this.save();
+          this.render();
+        }
+      }
+
+      sendTelegram(message) {
+        if (!this.botToken || !this.yourTgId) return;
+        fetch(`https://api.telegram.org/bot${this.botToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: this.yourTgId,
+            text: message,
+            parse_mode: "Markdown",
+          }),
+        }).catch(() => {
+          console.log("Telegram unavailable");
+        });
+      }
+
+      toggleDrawer(projectId) {
+        const drawer = document.querySelector(`[data-drawer="${projectId}"]`);
+        if (drawer) drawer.classList.toggle("is-open");
+      }
+
+      setFilter(status) {
+        this.currentFilter = status;
+        this.render();
+      }
+
+      toggleSettings() {
+        const panel = document.getElementById("settingsPanel");
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+        if (panel.style.display === "block") {
+          this.renderStaffList();
+          document.getElementById("botToken").value = this.botToken;
+          document.getElementById("yourTelegramId").value = this.yourTgId;
+        }
+      }
+
+      renderStaffList() {
+        const html = (this.staff || []).map((s) => `
+          <div style="background: rgba(22,32,26,.04); border-radius: 3px; padding: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px;">
+            <span>👤 ${this.escapeHtml(s.name)}</span>
+            <button class="pt-link" onclick="app.removeStaffMember('${s.id}')" style="color: var(--madder);">Remove</button>
+          </div>
+        `).join("");
+        document.getElementById("staffList").innerHTML = html;
+      }
+
+      addStaffMember() {
+        const name = document.getElementById("staffName").value.trim();
+        const tgId = document.getElementById("staffTgId").value.trim();
+        if (!name) return;
+        this.staff.push({ id: this.uid(), name, telegramId: tgId });
+        document.getElementById("staffName").value = "";
+        document.getElementById("staffTgId").value = "";
+        this.renderStaffList();
+        this.save();
+      }
+
+      removeStaffMember(staffId) {
+        this.staff = this.staff.filter((s) => s.id !== staffId);
+        this.renderStaffList();
+        this.save();
+      }
+
+      saveSettings() {
+        this.botToken = document.getElementById("botToken").value.trim();
+        this.yourTgId = document.getElementById("yourTelegramId").value.trim();
+        this.save();
+        this.toggleSettings();
+        alert("✅ Saved! Telegram notifications active.");
+      }
+
+      openEditor(projectId) {
+        this.editingId = projectId;
+        const modal = document.getElementById("modalOverlay");
+        const title = document.getElementById("modalTitle");
+        const saveBtn = document.getElementById("editorSaveBtn");
+
+        if (projectId) {
+          const project = this.projects.find((p) => p.id === projectId);
+          if (project) {
+            title.textContent = "Edit project";
+            saveBtn.textContent = "Save changes";
+            document.getElementById("editorName").value = project.name;
+            document.getElementById("editorClient").value = project.client;
+            document.getElementById("editorPrice").value = project.price;
+            document.getElementById("editorStart").value = project.start || "";
+            document.getElementById("editorDue").value = project.due || "";
+            document.getElementById("editorNotes").value = project.notes || "";
+          }
+        } else {
+          title.textContent = "New project";
+          saveBtn.textContent = "Create";
+          document.getElementById("editorName").value = "";
+          document.getElementById("editorClient").value = "";
+          document.getElementById("editorPrice").value = "";
+          document.getElementById("editorStart").value = "";
+          document.getElementById("editorDue").value = "";
+          document.getElementById("editorNotes").value = "";
+        }
+
+        modal.classList.add("is-open");
+        document.getElementById("editorName").focus();
+      }
+
+      closeEditor() {
+        this.editingId = null;
+        document.getElementById("modalOverlay").classList.remove("is-open");
+      }
+
+      closePhotoModal() {
+        document.getElementById("photoModal").classList.remove("is-open");
+      }
+
+      saveEditor() {
+        const name = document.getElementById("editorName").value.trim();
+        if (!name) return;
+
+        const project = {
+          id: this.editingId || this.uid(),
+          name,
+          client: document.getElementById("editorClient").value.trim(),
+          price: Number(document.getElementById("editorPrice").value) || 0,
+          start: document.getElementById("editorStart").value,
+          due: document.getElementById("editorDue").value,
+          notes: document.getElementById("editorNotes").value.trim(),
+          status: "running",
+          expenses: this.editingId ? (this.projects.find((p) => p.id === this.editingId)?.expenses || []) : [],
+          remarks: this.editingId ? (this.projects.find((p) => p.id === this.editingId)?.remarks || []) : [],
+          staff: this.editingId ? (this.projects.find((p) => p.id === this.editingId)?.staff || []) : [],
+        };
+
+        if (this.editingId) {
+          const idx = this.projects.findIndex((p) => p.id === this.editingId);
+          if (idx >= 0) this.projects[idx] = project;
+        } else {
+          this.projects.unshift(project);
+        }
+
+        this.save();
+        this.closeEditor();
+        this.render();
+      }
+
+      deleteProject(projectId) {
+        const project = this.projects.find((p) => p.id === projectId);
+        if (confirm(`Delete "${project.name}"?`)) {
+          this.projects = this.projects.filter((p) => p.id !== projectId);
+          this.save();
+          this.render();
+        }
+      }
+    }
+
+    let app;
+    
+    // Initialize app when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        app = new ProjectTracker();
+      });
+    } else {
+      app = new ProjectTracker();
+    }
+  </script>
+</body>
+</html>
